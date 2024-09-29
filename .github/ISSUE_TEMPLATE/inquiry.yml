@@ -13,7 +13,6 @@ body:
       options:
         - AAAについて
         - BBBについて
-      required: true
 
   - type: textarea
     id: inquiry_content
@@ -21,7 +20,6 @@ body:
       label: 問い合わせ内容
       description: 問い合わせ内容を入力してください
       placeholder: 問い合わせ内容を入力してください
-      required: true
 
   - type: input
     id: inquiry_date
@@ -29,4 +27,3 @@ body:
       label: 問い合わせ対応希望日
       description: yyyy/mm/dd形式で入力してください
       placeholder: yyyy/mm/dd
-      required: true
