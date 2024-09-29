@@ -27,3 +27,10 @@ body:
       label: 問い合わせ対応希望日
       description: yyyy/mm/dd形式で入力してください
       placeholder: yyyy/mm/dd
+
+notifications:
+  email:
+    - address: enokida.hiroya@technopro.com
+      events:
+        - inquiry_created
+        - inquiry_updated
