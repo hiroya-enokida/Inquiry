@@ -17,5 +17,5 @@ jobs:
           password: ${{ secrets.GMAIL_PASSWORD }}
           subject: "New Issue: ${{ github.event.issue.title }}"
           body: "Issue details: ${{ github.event.issue.body }}"
-          to: java2daiei@gmail.com
+          to: ${{ steps.get_assignees.outputs.emails }}
           from: ${{ secrets.GMAIL_USERNAME }}
