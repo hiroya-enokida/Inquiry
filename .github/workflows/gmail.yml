@@ -1,0 +1,21 @@
+name: Issue Notification
+
+on:
+  issues:
+    types: [opened, edited]
+
+jobs:
+  send_email:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send email
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 587
+          username: ${{ secrets.GMAIL_USERNAME }}
+          password: ${{ secrets.GMAIL_PASSWORD }}
+          subject: "New Issue: ${{ github.event.issue.title }}"
+          body: "Issue details: ${{ github.event.issue.body }}"
+          to: java2daiei@gmail.com
+          from: ${{ secrets.GMAIL_USERNAME }}
