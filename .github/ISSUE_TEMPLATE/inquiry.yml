@@ -1,7 +1,7 @@
 name: 問い合わせフォーム
 description: 問い合わせを報告するためのテンプレート
 title: "[INQUIRY] タイトルを入力してください"
-labels: [""]
+labels: ["inquiry"]
 assignees: []
 
 body:
