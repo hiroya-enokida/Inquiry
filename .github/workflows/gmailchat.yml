@@ -11,11 +11,11 @@ jobs:
       - name: Send email
         uses: dawidd6/action-send-mail@v3
         with:
-          server_address: smtp.gmail.com
+          server_address: smtp.office365.com
           server_port: 587
-          username: ${{ secrets.GMAIL_USERNAME }}
-          password: ${{ secrets.GMAIL_PASSWORD }}
+          username: ${{ secrets.OUTLOOK_USERNAME }}
+          password: ${{ secrets.OUTLOOK_PASSWORD }}
           subject: "New Comment on Issue: ${{ github.event.issue.title }}"
           body: "Comment details: ${{ github.event.comment.body }}"
-          to: ${{ steps.get_assignees.outputs.emails }}
-          from: ${{ secrets.GMAIL_USERNAME }}
+          to: enokida.hiroya@technopro.com
+          from: ${{ secrets.OUTLOOK_USERNAME }}
