@@ -1,21 +1,22 @@
-name: Issue Notification
+name: Notify on Inquiry
 
 on:
   issues:
     types: [opened, edited]
 
 jobs:
-  send_email:
+  notify:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Send email
-        uses: dawidd6/action-send-mail@v3
-        with:
-          server_address: smtp.gmail.com
-          server_port: 587
-          username: ${{ secrets.GMAIL_USERNAME }}
-          password: ${{ secrets.GMAIL_PASSWORD }}
-          subject: "New Issue: ${{ github.event.issue.title }}"
-          body: "Issue details: ${{ github.event.issue.body }}"
-          to: ${{ steps.get_assignees.outputs.emails }}
-          from: ${{ secrets.GMAIL_USERNAME }}
+    - name: Send notification email
+      uses: dawidd6/action-send-mail@v3
+      with:
+        server_address: smtp.office365.com
+        server_port: 587
+        username: ${{ secrets.OUTLOOK_USERNAME }}
+        password: ${{ secrets.OUTLOOK_PASSWORD }}
+        subject: "New Inquiry Notification"
+        body: "A new inquiry has been created or updated. Please check the details on GitHub."
+        to: enokida.hiroya@technopro.com
+        from: ${{ secrets.OUTLOOK_USERNAME }}
