@@ -1,0 +1,32 @@
+name: 問い合わせフォーム
+description: 問い合わせを報告するためのテンプレート
+title: "[INQUIRY] タイトルを入力してください"
+labels: ["inquiry"]
+assignees: []
+
+body:
+  - type: dropdown
+    id: inquiry_type
+    attributes:
+      label: 問い合わせ種類
+      description: 問い合わせの種類を選択してください
+      options:
+        - AAAについて
+        - BBBについて
+      required: true
+
+  - type: textarea
+    id: inquiry_content
+    attributes:
+      label: 問い合わせ内容
+      description: 問い合わせ内容を入力してください
+      placeholder: 問い合わせ内容を入力してください
+      required: true
+
+  - type: input
+    id: inquiry_date
+    attributes:
+      label: 問い合わせ対応希望日
+      description: yyyy/mm/dd形式で入力してください
+      placeholder: yyyy/mm/dd
+      required: true
