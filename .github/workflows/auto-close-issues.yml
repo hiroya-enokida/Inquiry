@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       issues: write
-      administration: write
+      contents: write
     steps:
       - name: Close stale issues
         uses: actions/stale@v3
