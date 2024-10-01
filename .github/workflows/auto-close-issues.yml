@@ -2,14 +2,11 @@ name: Auto Close Issues
 
 on:
   schedule:
-    - cron: '* * * * *' # 1分ごとに実行
+    - cron: '*/3 * * * *' # 3分ごとに実行
 
 jobs:
   close-issues:
     runs-on: ubuntu-latest
-    permissions:
-      issues: write
-      administration: write
     steps:
       - name: Close stale issues
         uses: actions/stale@v3
@@ -17,5 +14,5 @@ jobs:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           stale-issue-message: 'This issue has been automatically closed due to inactivity.'
           stale-issue-label: '解決済み'
-          days-before-stale: 0.0007 # 1分を日数に換算
-          days-before-close: 0.0007 # 1分を日数に換算
+          days-before-stale: 0.05 # 3分を日数に換算
+          days-before-close: 0.05 # 3分を日数に換算
