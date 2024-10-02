@@ -13,7 +13,7 @@ let inquiryType = inquiryTypeMatch ? inquiryTypeMatch[1] : '問い合わせ種�
 
 // コメントを追加するための関数
 async function addComment() {
-  const token = core.getInput('GITHUB_TOKEN');
+  const token = process.env.GITHUB_TOKEN;
   const octokit = github.getOctokit(token);
 
   const context = github.context;
