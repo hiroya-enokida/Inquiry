@@ -1,10 +1,36 @@
-// handle-issue.js
-const issue = require(process.env.GITHUB_EVENT_PATH);
-console.log('Issue created: ' + issue.issue.title);
+const fs = require('fs');
+const github = require('@actions/github');
+const core = require('@actions/core');
 
-// ブラウザ環境でアラートを表示する場合
-if (typeof window !== 'undefined') {
-  alert('テストメッセージ');
-} else {
-  console.log('テストメッセージ');
+// GitHub Actionsの環境変数からイベントデータを読み込む
+const eventPath = process.env.GITHUB_EVENT_PATH;
+const eventData = JSON.parse(fs.readFileSync(eventPath, 'utf8'));
+
+// イシューのタイトルと問い合わせ種類を取得
+const issueTitle = eventData.issue.title;
+const inquiryType = eventData.issue.body.match(/問い合わせ種類:\s*(.*)/)[1];
+
+// コメントを追加するための関数
+async function addComment() {
+  const token = core.getInput('GITHUB_TOKEN');
+  const octokit = github.getOctokit(token);
+
+  const context = github.context;
+  const issueNumber = context.issue.number;
+  const owner = context.repo.owner;
+  const repo = context.repo.repo;
+
+  const commentBody = `問い合わせ種類: ${inquiryType}`;
+
+  await octokit.issues.createComment({
+    owner,
+    repo,
+    issue_number: issueNumber,
+    body: commentBody
+  });
 }
+
+// コメントを追加
+addComment().catch(error => {
+  core.setFailed(error.message);
+});
