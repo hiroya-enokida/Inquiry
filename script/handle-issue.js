@@ -1,20 +1,10 @@
-name: Issue Handler
+// handle-issue.js
+const issue = require(process.env.GITHUB_EVENT_PATH);
+console.log('Issue created: ' + issue.issue.title);
 
-on:
-  issues:
-    types: [opened]
-
-jobs:
-  handle-issue:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: '14'
-
-      - name: Run JavaScript
-        run: node ./scripts/handle-issue.js
+// ブラウザ環境でアラートを表示する場合
+if (typeof window !== 'undefined') {
+  alert('テストメッセージ');
+} else {
+  console.log('テストメッセージ');
+}
