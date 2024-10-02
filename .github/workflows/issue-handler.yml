@@ -17,4 +17,6 @@ jobs:
           node-version: '14'
 
       - name: Run JavaScript
-        run: node ./script/handle-issue.js
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: node ./scripts/handle-issue.js
