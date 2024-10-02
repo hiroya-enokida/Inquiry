@@ -14,7 +14,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '14'
+          node-version: '16'  # 最新のLTSバージョンを指定
 
       - name: Install dependencies
         run: npm install @actions/github @actions/core
@@ -22,4 +22,4 @@ jobs:
       - name: Run JavaScript
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: node ./script/handle-issue.js
+        run: node ./scripts/handle-issue.js
