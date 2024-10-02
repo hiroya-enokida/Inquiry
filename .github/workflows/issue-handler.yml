@@ -17,4 +17,4 @@ jobs:
           node-version: '14'
 
       - name: Run JavaScript
-        run: node ./scripts/handle-issue.js
+        run: node ./script/handle-issue.js
