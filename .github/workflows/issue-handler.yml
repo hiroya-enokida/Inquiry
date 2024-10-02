@@ -1,0 +1,16 @@
+name: Issue Handler
+
+on:
+  issues:
+    types: [opened]
+
+jobs:
+  handle-issue:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Run JavaScript
+        run: |
+          node -e "console.log('Issue created: ${GITHUB_EVENT.issue.title}')"
