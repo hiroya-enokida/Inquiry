@@ -19,4 +19,4 @@ jobs:
       - name: Run JavaScript
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: node ./scripts/handle-issue.js
+        run: node ./script/handle-issue.js
