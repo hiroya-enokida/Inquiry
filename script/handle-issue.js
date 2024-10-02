@@ -23,7 +23,7 @@ async function addComment() {
 
   const commentBody = `問い合わせ種類: ${inquiryType}`;
 
-  await octokit.issues.createComment({
+  await octokit.rest.issues.createComment({
     owner,
     repo,
     issue_number: issueNumber,
