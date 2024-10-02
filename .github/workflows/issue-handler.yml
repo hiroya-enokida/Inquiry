@@ -16,7 +16,10 @@ jobs:
         with:
           node-version: '14'
 
+      - name: Install dependencies
+        run: npm install @actions/github @actions/core
+
       - name: Run JavaScript
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: node ./script/handle-issue.js
+        run: node ./scripts/handle-issue.js
