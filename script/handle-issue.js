@@ -9,7 +9,7 @@ const eventData = JSON.parse(fs.readFileSync(eventPath, 'utf8'));
 // イシューのタイトルと問い合わせ種類を取得
 const issueTitle = eventData.issue.title;
 let inquiryTypeMatch = eventData.issue.body.match(/問い合わせ種類:\s*(.*)/);
-let inquiryType = inquiryTypeMatch ? inquiryTypeMatch[1] : '問い合わせ種類が見つかりませんでした';
+let inquiryType = inquiryTypeMatch ? inquiryTypeMatch[1].trim() : '問い合わせ種類が見つかりませんでした';
 
 // コメントを追加するための関数
 async function addComment() {
