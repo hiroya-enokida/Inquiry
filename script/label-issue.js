@@ -18,6 +18,10 @@ async function run() {
     } else {
       console.log(`アラート: コメントの送信者は ${commentAuthor} です。`);
     }
+
+  } catch (error) {
+    core.setFailed(error.message);
+  }
 }
 
 run();
