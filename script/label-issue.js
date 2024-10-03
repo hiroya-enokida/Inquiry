@@ -3,7 +3,7 @@ const github = require('@actions/github');
 
 async function run() {
   try {
-    const token = core.getInput('GITHUB_TOKEN');
+    const token = process.env.GITHUB_TOKEN;
     const octokit = github.getOctokit(token);
     const { context = {} } = github;
     const { issue } = context.payload;
