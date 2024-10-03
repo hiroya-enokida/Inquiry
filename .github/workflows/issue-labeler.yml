@@ -5,7 +5,7 @@ on:
     types: [opened]
 
 permissions:
-  issues: write  # コメントを追加するための権限を付与
+  issues: write  # コメントを追加するための権限を付与a
 
 jobs:
   label-issue:
