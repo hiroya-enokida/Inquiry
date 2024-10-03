@@ -1,8 +1,11 @@
 name: Issue Labeler
 
 on:
-  issue_comment:
+  issues:
     types: [opened]
+
+permissions:
+  issues: write  # コメントを追加するための権限を付与
 
 jobs:
   label-issue:
