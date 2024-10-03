@@ -22,4 +22,4 @@ jobs:
       - name: Label issue
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: node ./scripts/label-issue.js
+        run: node ./script/label-issue.js
