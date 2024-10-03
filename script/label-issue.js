@@ -5,7 +5,7 @@ async function run() {
   try {
     const token = process.env.GITHUB_TOKEN;
     const octokit = github.getOctokit(token);
-    const { context = {} } = github;
+    const { context } = github;
     const { issue } = context.payload;
 
     if (!issue) {
@@ -15,7 +15,7 @@ async function run() {
     const { owner, repo } = context.repo;
     const labels = ['bug']; // 追加したいラベルを指定
 
-    await octokit.issues.addLabels({
+    await octokit.rest.issues.addLabels({
       owner,
       repo,
       issue_number: issue.number,
