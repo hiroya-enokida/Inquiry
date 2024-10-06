@@ -42,11 +42,10 @@ jobs:
       run: echo "${{ steps.filter-issues.outputs.issues }}"
 
     - name: Mention issue owners and update labels
-      if: steps.filter-issues.outputs.issues != '[]'
       uses: actions/github-script@v6
       with:
         script: |
-          const issues = JSON.parse(process.env.ISSUES || '[]');
+          const issues = process.env.ISSUES ? JSON.parse(process.env.ISSUES) : [];
           if (issues.length === 0) {
             console.log('No issues to process');
           } else {
