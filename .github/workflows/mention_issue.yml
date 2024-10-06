@@ -1,43 +1,25 @@
 name: Mention Issue Owner
 
 on:
-  schedule:
-    - cron: '* * * * *' # 1分ごとに実行
-  workflow_dispatch: # 手動トリガーを追加
+  issue_comment:
+    types: [created]
+  workflow_dispatch: # 手動トリガーを追加    
 
 jobs:
-  mention-owner:
+  mention:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
+    - name: Check out the repository
       uses: actions/checkout@v2
 
-    - name: List issues with "回答済み" label
-      id: list-issues
-      uses: actions/github-script@v6
-      with:
-        script: |
-          const issues = await github.rest.issues.listForRepo({
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            labels: '回答済み',
-            state: 'open'
-          });
-          return issues.data;
-
-    - name: Mention issue owners
-      uses: actions/github-script@v6
-      with:
-        script: |
-          const issues = JSON.parse(process.env.ISSUES);
-          for (const issue of issues) {
-            await github.rest.issues.createComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: issue.number,
-              body: `@${issue.user.login} 回答未確認です。確認してリアクションお願いします。`
-            });
-          }
+    - name: Mention the issue owner
       env:
-        ISSUES: ${{ steps.list-issues.outputs.result }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        ISSUE_OWNER=$(jq -r '.issue.user.login' < "${GITHUB_EVENT_PATH}")
+        COMMENT_BODY="こんにちは！！ @${ISSUE_OWNER}"
+        ISSUE_NUMBER=$(jq -r '.issue.number' < "${GITHUB_EVENT_PATH}")
+        curl -X POST -H "Authorization: token $GITHUB_TOKEN" \
+          -d "{\"body\": \"${COMMENT_BODY}\"}" \
+          "https://api.github.com/repos/${{ github.repository }}/issues/${ISSUE_NUMBER}/comments"
