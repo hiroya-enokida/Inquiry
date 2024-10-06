@@ -29,7 +29,7 @@ jobs:
     - name: Filter issues with no recent activity
       id: filter-issues
       run: |
-        issues=$(echo '${{ steps.get-issues.outputs.result }}' | jq -r '.')
+        issues=$(echo '${{ steps.get-issues.outputs.result }}' | jq -c '.')
         filtered_issues=$(echo "$issues" | jq '[.[] | select(.updated_at < (now - 180 | todate))]')
         echo "::set-output name=issues::$filtered_issues"
 
@@ -41,20 +41,24 @@ jobs:
       with:
         script: |
           const issues = JSON.parse(process.env.ISSUES || '[]');
-          for (const issue of issues) {
-            await github.rest.issues.createComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: issue.number,
-              body: `@${issue.user.login} 回答未確認です。確認してリアクションお願いします。`
-            });
+          if (issues.length === 0) {
+            console.log('No issues to process');
+          } else {
+            for (const issue of issues) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                body: `@${issue.user.login} 回答未確認です。確認してリアクションお願いします。`
+              });
 
-            await github.rest.issues.update({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: issue.number,
-              labels: issue.labels.map(label => label.name === '回答済み' ? '回答未確認' : label.name)
-            });
+              await github.rest.issues.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                labels: issue.labels.map(label => label.name === '回答済み' ? '回答未確認' : label.name)
+              });
+            }
           }
       env:
         ISSUES: ${{ steps.filter-issues.outputs.issues }}
