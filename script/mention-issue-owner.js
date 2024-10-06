@@ -2,8 +2,8 @@ const { Octokit } = require("@octokit/rest");
 const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN });
 
 async function run() {
-  const owner = 'Inquiry'; // リポジトリのオーナー名を指定
-  const repo = 'hiroya-enokida'; // リポジトリ名を指定
+  const owner = 'hiroya-enokida'; // リポジトリのオーナー名を指定
+  const repo = 'Inquiry'; // リポジトリ名を指定
 
   // "回答済み"ラベルが付いたissueを取得
   const { data: issues } = await octokit.issues.listForRepo({
