@@ -5,42 +5,40 @@ on:
     - cron: '* * * * *' # 1分ごとに実行
   workflow_dispatch: # 手動トリガーを追加
 
-permissions:
- issues: write;
- contents: write;
-
 jobs:
-  mention:
+  mention-owner:
     runs-on: ubuntu-latest
 
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
 
-    - name: Set up Node.js
-      uses: actions/setup-node@v2
+    - name: List issues with "回答済み" label
+      uses: actions/github-script@v6
+      id: list-issues
       with:
-        node-version: '14'
+        script: |
+          const issues = await github.issues.listForRepo({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            labels: '回答済み',
+            state: 'open'
+          });
+          return issues.data;
 
-    - name: Create package.json
-      run: |
-        echo '{
-          "name": "mention-issue-owner",
-          "version": "1.0.0",
-          "description": "A GitHub Action to mention issue owners",
-          "main": "mention-issue-owner.js",
-          "scripts": {
-            "start": "node ./script/mention-issue-owner.js"
-          },
-          "dependencies": {
-            "@octokit/rest": "^18.0.0"
+    - name: Mention issue owners
+      uses: actions/github-script@v6
+      with:
+        script: |
+          const issues = JSON.parse(process.env.ISSUES);
+          for (const issue of issues) {
+            await github.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issue.number,
+              body: `@${issue.user.login} 回答未確認です。確認してリアクションお願いします。`
+            });
           }
-        }' > package.json
-
-    - name: Install dependencies
-      run: npm install
-
-    - name: Run script
-      run: npm start
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        ISSUES: ${{ steps.list-issues.outputs.result }}
+
