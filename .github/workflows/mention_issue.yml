@@ -43,6 +43,11 @@ jobs:
                 curl -X POST -H "Authorization: token $GITHUB_TOKEN" \
                   -d "{\"body\": \"${COMMENT_BODY}\"}" \
                   "https://api.github.com/repos/${{ github.repository }}/issues/${ISSUE_NUMBER}/comments"
+
+                # ラベルを「リマインド」に変更
+                curl -X PATCH -H "Authorization: token $GITHUB_TOKEN" \
+                  -d '{"labels": ["リマインド"]}' \
+                  "https://api.github.com/repos/${{ github.repository }}/issues/${ISSUE_NUMBER}"
               fi
             fi
           fi
