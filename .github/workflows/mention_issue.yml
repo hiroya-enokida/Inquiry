@@ -39,7 +39,7 @@ jobs:
             if [ $(($(date -d "$CURRENT_TIME" +%s) - $(date -d "$UPDATED_AT" +%s))) -gt 180 ]; then
               # ラベルが「回答済み」の場合にコメントを投稿
               if echo "$ISSUE_LABELS" | grep -q "回答済み"; then
-                COMMENT_BODY="こんにちは！！ @${ISSUE_OWNER}"
+                COMMENT_BODY="リマインドテスト！！ @${ISSUE_OWNER}"
                 curl -X POST -H "Authorization: token $GITHUB_TOKEN" \
                   -d "{\"body\": \"${COMMENT_BODY}\"}" \
                   "https://api.github.com/repos/${{ github.repository }}/issues/${ISSUE_NUMBER}/comments"
