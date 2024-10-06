@@ -1,4 +1,4 @@
-name: Mention Issue Owners
+name: Mention Issue Owner
 
 on:
   schedule:
@@ -6,63 +6,19 @@ on:
   workflow_dispatch: # 手動トリガーを追加
 
 jobs:
-  mention-issue-owners:
+  mention:
     runs-on: ubuntu-latest
 
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
 
-    - name: Get issues with "回答済み" label
-      uses: actions/github-script@v6
-      id: get-issues
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
       with:
-        script: |
-          const issues = await github.rest.issues.listForRepo({
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            labels: '回答済み',
-            state: 'open'
-          });
-          core.setOutput('issues', JSON.stringify(issues.data));
+        node-version: '14'
 
-    - name: Filter issues with no recent activity
-      id: filter-issues
-      run: |
-        issues=$(echo '${{ steps.get-issues.outputs.issues }}' | jq -r '.')
-        filtered_issues=$(echo "$issues" | jq '[.[] | select(.updated_at < (now - 180 | todate))]')
-        if [ -z "$filtered_issues" ]; then
-          echo "::set-output name=issues::[]"
-        else
-          echo "::set-output name=issues::$filtered_issues"
-        fi
-
-    - name: Debug filtered issues
-      run: echo "${{ steps.filter-issues.outputs.issues }}"
-
-    - name: Mention issue owners and update labels
-      uses: actions/github-script@v6
-      with:
-        script: |
-          const issues = process.env.ISSUES ? JSON.parse(process.env.ISSUES) : [];
-          if (issues.length === 0) {
-            console.log('No issues to process');
-          } else {
-            for (const issue of issues) {
-              await github.rest.issues.createComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: issue.number,
-                body: `@${issue.user.login} 回答未確認です。確認してリアクションお願いします。`
-              });
-
-              await github.rest.issues.update({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: issue.number,
-                labels: issue.labels.map(label => label.name === '回答済み' ? '回答未確認' : label.name)
-              });
-            }
-          }
+    - name: Run script
+      run: node ./script/mention-issue-owner.js
       env:
-        ISSUES: ${{ steps.filter-issues.outputs.issues }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
