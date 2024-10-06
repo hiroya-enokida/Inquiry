@@ -31,12 +31,17 @@ jobs:
       run: |
         issues=$(echo '${{ steps.get-issues.outputs.issues }}' | jq -r '.')
         filtered_issues=$(echo "$issues" | jq '[.[] | select(.updated_at < (now - 180 | todate))]')
+        if [ -z "$filtered_issues" ]; then
+          echo "No issues to process"
+          exit 0
+        fi
         echo "::set-output name=issues::$filtered_issues"
 
     - name: Debug filtered issues
       run: echo "${{ steps.filter-issues.outputs.issues }}"
 
     - name: Mention issue owners and update labels
+      if: steps.filter-issues.outputs.issues != '[]'
       uses: actions/github-script@v6
       with:
         script: |
