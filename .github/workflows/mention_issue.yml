@@ -18,7 +18,7 @@ jobs:
       id: get-issues
       with:
         script: |
-          const issues = await github.issues.listForRepo({
+          const issues = await github.rest.issues.listForRepo({
             owner: context.repo.owner,
             repo: context.repo.repo,
             labels: '回答済み',
@@ -37,7 +37,7 @@ jobs:
         script: |
           const issues = JSON.parse(process.env.ISSUES);
           for (const issue of issues) {
-            await github.issues.createComment({
+            await github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: issue.number,
