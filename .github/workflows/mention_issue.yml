@@ -1,4 +1,4 @@
-name: aMention Issue Owners
+name: Mention Issue Owners
 
 on:
   schedule:
