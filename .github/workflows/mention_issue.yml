@@ -2,7 +2,7 @@ name: Mention Issue Owners
 
 on:
   schedule:
-    - cron: '*/1 * * * *' # 5分ごとに実行
+    - cron: '* * * * *' # 1分ごとに実行
 
 jobs:
   mention-issue-owners:
