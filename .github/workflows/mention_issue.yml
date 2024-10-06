@@ -24,12 +24,12 @@ jobs:
             labels: '回答済み',
             state: 'open'
           });
-          return JSON.stringify(issues.data);
+          core.setOutput('issues', JSON.stringify(issues.data));
 
     - name: Filter issues with no recent activity
       id: filter-issues
       run: |
-        issues=$(echo '${{ steps.get-issues.outputs.result }}' | jq -r '.')
+        issues=$(echo '${{ steps.get-issues.outputs.issues }}' | jq -r '.')
         filtered_issues=$(echo "$issues" | jq '[.[] | select(.updated_at < (now - 180 | todate))]')
         echo "::set-output name=issues::$filtered_issues"
 
