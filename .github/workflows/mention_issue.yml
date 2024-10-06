@@ -3,6 +3,7 @@ name: Mention Issue Owners
 on:
   schedule:
     - cron: '* * * * *' # 1分ごとに実行
+  workflow_dispatch: # 手動トリガーを追加
 
 jobs:
   mention-issue-owners:
