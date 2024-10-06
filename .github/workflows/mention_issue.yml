@@ -2,7 +2,7 @@ name: Mention Issue Owner
 
 on:
   workflow_dispatch: # 手動トリガーを追加
-
+  
 permissions:
   issues: write
   contents: write
@@ -27,7 +27,7 @@ jobs:
         TIME_DIFF=$(($(date -d "$CURRENT_TIME" +%s) - $(date -d "$LAST_UPDATED" +%s)))
 
         # Check if the last comment has the "回答済み" label and if the time difference is more than 3 minutes
-        LAST_COMMENT_LABELS=$(jq -r '.comment.labels[].name' < "${GITHUB_EVENT_PATH}")
+        LAST_COMMENT_LABELS=$(jq -r '.comment.labels[].name // empty' < "${GITHUB_EVENT_PATH}")
 
         if echo "$LAST_COMMENT_LABELS" | grep -q "回答済み" && [ $TIME_DIFF -gt 180 ]; then
           COMMENT_BODY="こんにちは！！ @${ISSUE_OWNER}"
