@@ -1,8 +1,7 @@
 name: Mention Issue Owner
 
 on:
-  issue_comment:
-    types: [created]
+  workflow_dispatch: # 手動トリガーを追加
 
 permissions:
   issues: write
@@ -21,8 +20,18 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         ISSUE_OWNER=$(jq -r '.issue.user.login' < "${GITHUB_EVENT_PATH}")
-        COMMENT_BODY="こんにちは！！ @${ISSUE_OWNER}"
         ISSUE_NUMBER=$(jq -r '.issue.number' < "${GITHUB_EVENT_PATH}")
-        curl -X POST -H "Authorization: token $GITHUB_TOKEN" \
-          -d "{\"body\": \"${COMMENT_BODY}\"}" \
-          "https://api.github.com/repos/${{ github.repository }}/issues/${ISSUE_NUMBER}/comments"
+        ISSUE_LABELS=$(jq -r '.issue.labels[].name' < "${GITHUB_EVENT_PATH}")
+        LAST_UPDATED=$(jq -r '.issue.updated_at' < "${GITHUB_EVENT_PATH}")
+        CURRENT_TIME=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+        TIME_DIFF=$(($(date -d "$CURRENT_TIME" +%s) - $(date -d "$LAST_UPDATED" +%s)))
+
+        # Check if the last comment has the "回答済み" label and if the time difference is more than 3 minutes
+        LAST_COMMENT_LABELS=$(jq -r '.comment.labels[].name' < "${GITHUB_EVENT_PATH}")
+
+        if echo "$LAST_COMMENT_LABELS" | grep -q "回答済み" && [ $TIME_DIFF -gt 180 ]; then
+          COMMENT_BODY="こんにちは！！ @${ISSUE_OWNER}"
+          curl -X POST -H "Authorization: token $GITHUB_TOKEN" \
+            -d "{\"body\": \"${COMMENT_BODY}\"}" \
+            "https://api.github.com/repos/${{ github.repository }}/issues/${ISSUE_NUMBER}/comments"
+        fi
