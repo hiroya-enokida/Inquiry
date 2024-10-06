@@ -5,6 +5,10 @@ on:
     - cron: '* * * * *' # 1分ごとに実行
   workflow_dispatch: # 手動トリガーを追加
 
+permissions:
+ issues: write;
+ contents: write;
+
 jobs:
   mention:
     runs-on: ubuntu-latest
