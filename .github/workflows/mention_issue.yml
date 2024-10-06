@@ -19,7 +19,12 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        ISSUE_OWNER=$(jq -r '.issue.user.login' < "${GITHUB_EVENT_PATH}")
+        ISSUE_OWNER=$(jq -r '.issue.user.login // empty' < "${GITHUB_EVENT_PATH}")
+        if [ -z "$ISSUE_OWNER" ]; then
+          echo "Issue owner is null, skipping..."
+          exit 0
+        fi
+
         ISSUE_NUMBER=$(jq -r '.issue.number' < "${GITHUB_EVENT_PATH}")
         ISSUE_LABELS=$(jq -r '.issue.labels[].name' < "${GITHUB_EVENT_PATH}")
         LAST_UPDATED=$(jq -r '.issue.updated_at' < "${GITHUB_EVENT_PATH}")
