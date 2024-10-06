@@ -24,18 +24,21 @@ jobs:
             labels: '回答済み',
             state: 'open'
           });
-          return issues.data;
+          return JSON.stringify(issues.data);
 
     - name: Filter issues with no recent activity
       id: filter-issues
       run: |
         echo "::set-output name=issues::$(echo '${{ steps.get-issues.outputs.result }}' | jq '[.[] | select(.updated_at < (now - 10 | todate))]')"
 
+    - name: Debug filtered issues
+      run: echo "${{ steps.filter-issues.outputs.issues }}"
+
     - name: Mention issue owners
       uses: actions/github-script@v6
       with:
         script: |
-          const issues = JSON.parse(process.env.ISSUES);
+          const issues = JSON.parse(process.env.ISSUES || '[]');
           for (const issue of issues) {
             await github.rest.issues.createComment({
               owner: context.repo.owner,
