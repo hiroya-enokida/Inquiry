@@ -1,4 +1,4 @@
-name: aMention Issue Owners
+name: Mention Issue Owners
 
 on:
   schedule:
@@ -32,11 +32,10 @@ jobs:
         issues=$(echo '${{ steps.get-issues.outputs.issues }}' | jq -r '.')
         filtered_issues=$(echo "$issues" | jq '[.[] | select(.updated_at < (now - 180 | todate))]')
         if [ -z "$filtered_issues" ]; then
-          echo "No issues to process"
           echo "::set-output name=issues::[]"
-          exit 0
+        else
+          echo "::set-output name=issues::$filtered_issues"
         fi
-        echo "::set-output name=issues::$filtered_issues"
 
     - name: Debug filtered issues
       run: echo "${{ steps.filter-issues.outputs.issues }}"
