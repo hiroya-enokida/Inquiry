@@ -33,6 +33,7 @@ jobs:
         filtered_issues=$(echo "$issues" | jq '[.[] | select(.updated_at < (now - 180 | todate))]')
         if [ -z "$filtered_issues" ]; then
           echo "No issues to process"
+          echo "::set-output name=issues::[]"
           exit 0
         fi
         echo "::set-output name=issues::$filtered_issues"
