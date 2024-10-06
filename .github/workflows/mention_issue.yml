@@ -23,20 +23,27 @@ jobs:
         ISSUES=$(curl -H "Authorization: token $GITHUB_TOKEN" \
           "https://api.github.com/repos/${{ github.repository }}/issues?state=all")
 
+        # 現在の時刻を取得
+        CURRENT_TIME=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+
         # 各Issueに対して処理を行う
         echo "$ISSUES" | jq -c '.[]' | while read -r ISSUE; do
           ISSUE_OWNER=$(echo "$ISSUE" | jq -r '.user.login')
           ISSUE_NUMBER=$(echo "$ISSUE" | jq -r '.number')
           ISSUE_LABELS=$(echo "$ISSUE" | jq -r '.labels[].name')
+          UPDATED_AT=$(echo "$ISSUE" | jq -r '.updated_at')
 
           # nullチェックを追加
-          if [ "$ISSUE_OWNER" != "null" ] && [ "$ISSUE_NUMBER" != "null" ] && [ "$ISSUE_LABELS" != "null" ]; then
-            # ラベルが「回答済み」の場合にコメントを投稿
-            if echo "$ISSUE_LABELS" | grep -q "回答済み"; then
-              COMMENT_BODY="こんにちは！！ @${ISSUE_OWNER}"
-              curl -X POST -H "Authorization: token $GITHUB_TOKEN" \
-                -d "{\"body\": \"${COMMENT_BODY}\"}" \
-                "https://api.github.com/repos/${{ github.repository }}/issues/${ISSUE_NUMBER}/comments"
+          if [ "$ISSUE_OWNER" != "null" ] && [ "$ISSUE_NUMBER" != "null" ] && [ "$ISSUE_LABELS" != "null" ] && [ "$UPDATED_AT" != "null" ]; then
+            # 最終更新から3分以上経過しているか確認
+            if [ $(($(date -d "$CURRENT_TIME" +%s) - $(date -d "$UPDATED_AT" +%s))) -gt 180 ]; then
+              # ラベルが「回答済み」の場合にコメントを投稿
+              if echo "$ISSUE_LABELS" | grep -q "回答済み"; then
+                COMMENT_BODY="こんにちは！！ @${ISSUE_OWNER}"
+                curl -X POST -H "Authorization: token $GITHUB_TOKEN" \
+                  -d "{\"body\": \"${COMMENT_BODY}\"}" \
+                  "https://api.github.com/repos/${{ github.repository }}/issues/${ISSUE_NUMBER}/comments"
+              fi
             fi
           fi
         done
