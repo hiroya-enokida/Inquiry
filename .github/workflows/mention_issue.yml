@@ -29,7 +29,7 @@ jobs:
     - name: Filter issues with no recent activity
       id: filter-issues
       run: |
-        issues=$(echo '${{ steps.get-issues.outputs.result }}' | jq -c '.')
+        issues=$(echo '${{ steps.get-issues.outputs.result }}' | jq -r '.')
         filtered_issues=$(echo "$issues" | jq '[.[] | select(.updated_at < (now - 180 | todate))]')
         echo "::set-output name=issues::$filtered_issues"
 
