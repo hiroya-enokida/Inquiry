@@ -34,7 +34,7 @@ jobs:
     - name: Debug filtered issues
       run: echo "${{ steps.filter-issues.outputs.issues }}"
 
-    - name: Mention issue owners
+    - name: Mention issue owners and update labels
       uses: actions/github-script@v6
       with:
         script: |
