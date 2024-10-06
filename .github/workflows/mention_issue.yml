@@ -1,0 +1,47 @@
+name: Mention Issue Owners
+
+on:
+  schedule:
+    - cron: '*/5 * * * *' # 5分ごとに実行
+
+jobs:
+  mention-issue-owners:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Get issues with "回答済み" label
+      uses: actions/github-script@v6
+      id: get-issues
+      with:
+        script: |
+          const issues = await github.issues.listForRepo({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            labels: '回答済み',
+            state: 'open'
+          });
+          return issues.data;
+
+    - name: Filter issues with no recent activity
+      id: filter-issues
+      run: |
+        echo "::set-output name=issues::$(echo '${{ steps.get-issues.outputs.result }}' | jq '[.[] | select(.updated_at < (now - 180 | todate))]')"
+
+    - name: Mention issue owners
+      uses: actions/github-script@v6
+      with:
+        script: |
+          const issues = JSON.parse(process.env.ISSUES);
+          for (const issue of issues) {
+            await github.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issue.number,
+              body: `@${issue.user.login} 回答未確認です。確認してリアクションお願いします。`
+            });
+          }
+      env:
+        ISSUES: ${{ steps.filter-issues.outputs.issues }}
