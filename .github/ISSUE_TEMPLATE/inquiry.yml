@@ -5,15 +5,6 @@ labels: ["inquiry"]
 assignees: []
 
 body:
-  - type: dropdown
-    id: inquiry_type
-    attributes:
-      label: 問い合わせ種類
-      description: 問い合わせの種類を選択してください
-      options:
-        - AAAについて
-        - BBBについて
-
   - type: textarea
     id: inquiry_content
     attributes:
