@@ -4,6 +4,10 @@ on:
   issues:
     types: [opened]
 
+permissions:
+ issues: write
+ contents: write
+
 jobs:
   validate:
     runs-on: ubuntu-latest
@@ -14,13 +18,15 @@ jobs:
       - name: Validate issue form
         run: |
           # 問い合わせ内容のバリデーション
-          if [[ -z "${{ github.event.issue.body }}" ]]; then
+          inquiry_content=$(echo "${{ github.event.issue.body }}" | grep -oP '(?<=問い合わせ内容: ).*')
+          if [[ -z "$inquiry_content" ]]; then
             echo "問い合わせ内容が空です。再入力してください。"
             exit 1
           fi
 
           # 問い合わせ対応希望日のバリデーション
-          if [[ ! "${{ github.event.issue.body }}" =~ ^[0-9]{4}/[0-9]{2}/[0-9]{2}$ ]]; then
+          inquiry_date=$(echo "${{ github.event.issue.body }}" | grep -oP '(?<=問い合わせ対応希望日: ).*')
+          if [[ ! "$inquiry_date" =~ ^[0-9]{4}/[0-9]{2}/[0-9]{2}$ ]]; then
             echo "問い合わせ対応希望日がyyyy/mm/dd形式ではありません。再入力してください。"
             exit 1
           fi
