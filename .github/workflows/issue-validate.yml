@@ -1,0 +1,38 @@
+name: Validate Inquiry Form
+
+on:
+  issue_comment:
+   types: [created]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Validate issue form
+        run: |
+          # 問い合わせ内容のバリデーション
+          if [ -z "${{ github.event.issue.body }}" ]; then
+            echo "問い合わせ内容が空です。再入力してください。"
+            exit 1
+          fi
+
+          # 問い合わせ対応希望日のバリデーション
+          if [[ ! ${{ github.event.issue.body }} =~ ^[0-9]{4}/[0-9]{2}/[0-9]{2}$ ]]; then
+            echo "問い合わせ対応希望日がyyyy/mm/dd形式ではありません。再入力してください。"
+            exit 1
+          fi
+          
+      - name: Comment on issue
+        if: failure()
+        uses: actions/github-script@v3
+        with:
+          script: |
+            github.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: 'フォームの入力に不備があります。問い合わせ内容が空でないか、または対応希望日がyyyy/mm/dd形式で入力されているかをご確認ください。'
+            })
