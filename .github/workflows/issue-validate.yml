@@ -1,8 +1,8 @@
 name: Validate Inquiry Form
 
 on:
-  issue_comment:
-   types: [created]
+  issues:
+   types: [opened]
 
 jobs:
   validate:
